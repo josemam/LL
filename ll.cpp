@@ -1,15 +1,11 @@
 #include <iostream>
+#include "iprecision.h"    // from Henrik Vestermask's arbitrary precision package
 using namespace std;
 
-bool TooBig(unsigned short int exp)
-{
-   return exp > 32;
-}
-
 // Returns 2^exp - 1
-unsigned long long Number(unsigned short int exp)
+int_precision Number(unsigned short int exp)
 {
-   unsigned long long number = 2;
+   int_precision number = 2;
    for (unsigned short int i = 1; i < exp; i++)
       number *= 2;
    
@@ -17,15 +13,18 @@ unsigned long long Number(unsigned short int exp)
    return number;
 }
 
-// Performs LL test for exp
+// Performs LL test for exp if exp is odd
 bool LL(unsigned short int exp)
 {
-   unsigned long long number = Number(exp);
-   unsigned long long s = 4;
+   if (exp%2 == 0)
+      return exp == 2;
+
+   int_precision number = Number(exp);
+   int_precision s = 4;
 
    while(exp > 2)
    {
-      s = (s*s - 2)%number;
+      s = (s*s - int_precision(2))%number;
       exp--;
    }
 
@@ -38,9 +37,7 @@ int main()
    cout << "Type an exponent (type 7 for 2⁷-1), and press Enter: ";
    cin >> exponent;
    cout << "2^" << exponent << "-1 is ";
-   if (TooBig(exponent))
-      cout << "too big to be tested" << endl;
-   else if (LL(exponent))
+   if (LL(exponent))
       cout << "prime" << endl;
    else
       cout << "not prime" << endl;
